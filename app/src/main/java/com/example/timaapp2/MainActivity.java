@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout.LayoutParams timeBlockParams;
     private ConstraintSet constraintSet;
     private ConstraintLayout constraintLayout;
+    private ScrollView scrollView;
     private Resources r;
 
     @Override
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         constraintLayout = findViewById(R.id.scrollViewLayout);
+        scrollView = findViewById(R.id.scrollView);
         r = constraintLayout.getResources();
         timeBlockParams = new ConstraintLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
@@ -42,18 +44,33 @@ public class MainActivity extends AppCompatActivity {
         timeBlock.setId(View.generateViewId());
         timeBlock.setBackgroundResource(R.drawable.time_block);
         timeBlock.setOnTouchListener(new View.OnTouchListener() {
-            float dY;
+            float startY;
+            float startRawY;
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        dY = view.getY() - event.getRawY();
+                        scrollView.requestDisallowInterceptTouchEvent(true);
+                        startRawY = event.getRawY();
+                        startY = view.getY();
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                        view.setY(event.getRawY() + dY);
+                        if (event.getRawY() - startRawY >= dipToPixels(40, r)) {
+                            view.setY(startY + dipToPixels(40, r));
+                            startRawY = event.getRawY();
+                            startY = view.getY();
+                        } else if (event.getRawY() - startRawY <= -dipToPixels(40, r)) {
+                            view.setY(startY - dipToPixels(40, r));
+                            startRawY = event.getRawY();
+                            startY = view.getY();
+                        }
+
                         break;
+
+                    case MotionEvent.ACTION_UP:
+                        scrollView.requestDisallowInterceptTouchEvent(false);
 
                     default:
                         return false;

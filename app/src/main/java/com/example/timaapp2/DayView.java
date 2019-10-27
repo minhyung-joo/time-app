@@ -38,7 +38,12 @@ public class DayView extends View {
             canvas.drawText("Timestamp", 0, y, gridLinePaint);
         }
 
-        canvas.drawLine(dipToPixels(gridLeftOffset + 2), dipToPixels(gridHeight - 2), dipToPixels(gridLeftOffset + 2), canvas.getClipBounds().height(), gridLinePaint);
+        canvas.drawLine(
+                dipToPixels(gridLeftOffset + 2),
+                dipToPixels(gridHeight - 2),
+                dipToPixels(gridLeftOffset + 2),
+                canvas.getClipBounds().height(), gridLinePaint
+        );
     }
 
     private float dipToPixels(float dip) {
